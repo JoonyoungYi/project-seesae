@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- Subhead
+================================================== -->
+ <!-- Main hero unit for a primary marketing message or call to action -->
+<div class="hero-unit {{ for_display["wp"] }}" >
+ 	<div class="container">
+    	<h1>{{for_display["title"]}}</h1>
+    	<p class="lead">all about see-sae of Agriculture, Fishery, Livestock products.</p>
+ 	</div>
+</div>
+
+<!-- PRODUCTS
+================================================== -->
+<div class="container">
+	{% for product in products %}
+		<div class="row">
+			<div class="span3" > </div>
+		  	<div class="span6">
+		  		<div class="card" >
+		  			<h3 class="card-heading simple">{{ product.name }}</h3>
+		  			
+		  			<div class="card-media" >
+					    <a class="card-media-container" href="#">
+					        <img src="{{product.img_url}}" />
+					    </a>
+					</div>
+
+                    <div class="card-body">
+						<p> 
+						{% if product.season %}
+							Now, in season. (
+						{% else %}
+							Now, NOT in season. ( SEASON : 
+						{% endif %}
+							{{product.season_start}} ~ {{product.season_end}} )
+						</p>
+
+						{%  if product.change_day %}
+							<p>Price changed by day : {{product.change_day }}%</p>	
+						{% endif %}
+
+						{%  if product.change_week %}
+							<p>Price changed by week : {{product.change_week }}%</p>	
+						{% endif %}
+
+						{%  if product.change_month %}
+							<p>Price changed by month : {{product.change_month }}%</p>	
+						{% endif %}
+			        </div>
+			        
+			        <div class="card-actions">
+			            <a class="btn btn-block" href="{{ url_for('show_detail', product_id=product.id) }}">
+			                View Details
+			            </a>
+			        </div>
+			    </div>
+		    </div>
+		    <div class="span3" > </div>
+	    </div>   	
+	{% endfor %} 
+</div>
+<!-- ================================================== -->
+{% endblock %}

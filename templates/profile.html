@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- Subhead
+================================================== -->
+ <!-- Main hero unit for a primary marketing message or call to action -->
+<div class="hero-unit wallpaper-profile" >
+ 	<div class="container">
+    	<h1>{% if session.username %}Hello, {{ session.username }}{% endif %}</h1>
+    	<p class="lead">all about see-sae of Agriculture, Fishery, Livestock products.</p>
+ 	</div>
+</div>
+
+<!-- PRODUCTS
+================================================== -->
+
+<div class="container">
+	<!-- ================================================== -->
+	<h2>Favorite Products</h2>
+	<div class="row">
+	{% for product in favorites %}
+		  	<div class="span4">
+		  		<div class="card" >
+		  			<h3 class="card-heading simple">{{ product.name }}</h3>
+		  			
+		  			<div class="card-media" >
+				        <img src="{{product.img_url}}" style="height:250px"  />
+					</div>
+
+                    <div class="card-body">
+			        	<p>00/00 ~ 00/00 은 제철입니다</p>
+					    <p>어제에 비해 가격이 20% 낮아졌다</p>
+					    <p>지난 주에 비해 가격이 10% 낮아졌다</p>
+					    <p>지난 달에 비해 가격이 30% 낮아졌다</p>
+			        </div>
+			        
+			        <div class="card-actions">
+			            <a class="btn btn-block" href="{{ url_for('show_detail', product_id=product.id) }}">
+			                View Details
+			            </a>
+			        </div>
+			    </div>
+		    </div>	
+	{% endfor %} 
+	</div>
+
+	<!-- ================================================== -->	
+	<h2>My Comments</h2>
+	<div class="row">
+	{% for comment in comments %}
+		<div class="span6">
+		<div class="card">
+			
+			<div class="card-comments">
+				<p>{{comment.content}} | {{comment.email}} | {{comment.timestamp}}</p>
+		      	
+		    </div>
+	    </div>
+	    </div>
+	{% endfor %}
+	</div>
+
+	<!-- ================================================== -->	
+	<h2>Hate Products</h2>
+	<div class="row">
+	{% for product in hates %}
+		  	<div class="span3">
+		  		<div class="card" >
+		  			<h3 class="card-heading simple">{{ product.name }}</h3>
+		  			
+		  			<div class="card-media"  style="height:175px" >
+				        <img src="{{product.img_url}}" />
+					</div>
+			        
+			        <div class="card-actions">
+			            <a class="btn btn-block" href="{{ url_for('show_detail', product_id=product.id) }}">
+			                View Details
+			            </a>
+			        </div>
+			    </div>
+		    </div>	
+	{% endfor %} 
+	</div>
+</div>
+
+<!-- ================================================== -->
+{% endblock %}

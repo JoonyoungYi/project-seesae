@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- Subhead
+================================================== -->
+ <!-- Main hero unit for a primary marketing message or call to action -->
+{% if product %}
+<div class="hero-unit hero-unit-detail" style="background-image: url('{{product.img_url}}')">
+ 	<div class="container">
+    	<h1>{{product.name}}</h1>
+    	
+		{% if product %}
+		<h3>
+		{% if product.season %}
+			Now, in season. (
+		{% else %}
+			Now, NOT in season. ( SEASON : 
+		{% endif %}
+			{{product.season_start}} ~ {{product.season_end}} )
+		</h3>
+		{% endif %}
+		
+    	<p>
+    	<a href="{{url_for('toggle_like', product_id=product.id)}}" class="btn btn-large {{dLike['like']}}" style="width:80px"> Like </a>&nbsp;&nbsp;
+    	<a href="#comments" class="btn btn-large" style="width:80px"> Comments </a>&nbsp;&nbsp;
+    	<a href="{{url_for('toggle_hate', product_id=product.id)}}" class="btn btn-large {{dLike['hate']}}" style="width:80px"> Hate </a> 
+    	</p>
+ 	</div>
+</div>
+{% endif %}
+
+
+<!-- PRODUCTS
+================================================== -->
+
+<div class="container">
+	
+	<!-- -->
+	<h2>Price Change Day by Day</h2>
+	<div class="row">
+	<div class="span10">
+		<div class="card" style="padding-bottom:20px;">
+			{% if price_charts_day %}
+
+			<canvas id="canvas_day" height="250" width="600"></canvas>
+
+			{% for price_chart in price_charts_day %}
+			<span style="border-color:{{price_chart.label_color}};border-style: solid; 
+						 border-width: 0 0 0 1em;display: block;margin-left: 10px;margin-top: 10px;padding 0 0.3em;"> &nbsp;
+				{{ price_chart.product_class_name }}	
+			</span>
+			{% endfor %}
+			
+			{% else %}
+			<h3 style="text-align:center;"> NO DATA </h3>
+			{% endif %}
+		</div>
+	</div>
+	</div>
+
+	<!-- -->
+	<h2>Price Change Week by Week</h2>
+	<div class="row">
+	<div class="span10">
+		<div class="card" style="padding-bottom:20px;">
+			{% if price_charts_day %}
+			<canvas id="canvas_week" height="250" width="600"></canvas>
+			
+			{% for price_chart in price_charts_day %}
+			<span style="border-color:{{price_chart.label_color}};border-style: solid; 
+						 border-width: 0 0 0 1em;display: block;margin-left: 10px;margin-top: 10px;padding 0 0.3em;"> &nbsp;
+				{{ price_chart.product_class_name }}	
+			</span>
+			{% endfor %}
+
+			{% else %}
+			<h3 style="text-align:center;"> NO DATA </h3>
+			{% endif %}
+
+		</div>
+	</div>
+	</div>
+
+	<!-- -->
+	<h2>Price Change Month by Month</h2>
+	<div class="row">
+	<div class="span10">
+		<div class="card" style="padding-bottom:20px;">
+			{% if price_charts_day %}
+			<canvas id="canvas_month" height="250" width="600"></canvas>
+
+			{% for price_chart in price_charts_day %}
+			<span style="border-color:{{price_chart.label_color}};border-style: solid; 
+						 border-width: 0 0 0 1em;display: block;margin-left: 10px;margin-top: 10px;padding 0 0.3em;"> &nbsp;
+				{{ price_chart.product_class_name }}	
+			</span>
+			{% endfor %}
+
+			{% else %}
+			<h3 style="text-align:center;"> NO DATA </h3>
+			{% endif %}
+
+		</div>
+	</div>
+	</div>
+
+	<!-- ================================================== -->	
+	<h2>Similar Products</h2>
+	<div class="row">
+	{% for product in similar_products %}
+		  	<div class="span3">
+		  		<div class="card" >
+		  			<h3 class="card-heading simple">{{ product.name }}</h3>
+		  			
+		  			<div class="card-media"  style="height:175px" >
+				        <img src="{{product.img_url}}" />
+					</div>
+			        
+			        <div class="card-actions">
+			            <a class="btn btn-block" href="{{ url_for('show_detail', product_id=product.id) }}">
+			                View Details
+			            </a>
+			        </div>
+			    </div>
+		    </div>	
+	{% endfor %} 
+	</div>
+
+	<!-- -->
+	<h2>Stores</h2>
+	<div class="row">
+		{% for store in stores %}	
+		<div class="span6">
+			<div class="card" >
+				<h3 class="card-heading simple">{{store.name}}</h3>
+				
+				<div class="card-body">
+				<iframe src="http://dna.daum.net/examples/maps/MissA/map_view.php?width=674&height=410&latitude={{store.latitude}}&longitude={{store.longitude}}&zoom=4" width='100%' height="400" scrolling="no" frameborder="0"></iframe>
+				</div>
+				<br/>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	<!-- -->
+	<h2 id="comments">Comments</h2>
+	<div class="row">
+	<div class="card span10 card-comment" style="padding-top:0px;">
+		<form action="{{ url_for('add_comment', product_id=product.id) }}" method="POST" style="margin:0px;">
+	        <input name="content" type="textarea" class="input-block-level" placeholder="Write Comment to this product..." style="min-height:50px;border:0px;padding:10px;word-break:break-all;">
+	    	
+	    	<div   style="background-color:#f8f8f8;height:30px;padding:10px;">
+	        <button class="btn btn-primary pull-left" name="confirm" type="submit" style="width:100px;">
+	           CONFIRM
+	        </button>
+	        </div>
+	    </form>
+  	</div>
+	</div>
+
+	{% for comment in comments %}
+	<img class="profile-pic media-object pull-left img-rounded" data-name="Prescott" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHBvaW50ZXItZXZlbnRzPSJub25lIiB3aWR0aD0iNDYiIGhlaWdodD0iNDYiIHN0eWxlPSJ3aWR0aDogNDZweDsgaGVpZ2h0OiA0NnB4OyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoNTIsIDczLCA5NCk7Ij48dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB5PSI1MCUiIHg9IjUwJSIgZHk9IjAuMzVlbSIgcG9pbnRlci1ldmVudHM9ImF1dG8iIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2FOZXVlLUxpZ2h0LEhlbHZldGljYSBOZXVlIExpZ2h0LEhlbHZldGljYSBOZXVlLEhlbHZldGljYSwgQXJpYWwsTHVjaWRhIEdyYW5kZSwgc2Fucy1zZXJpZiIgc3R5bGU9ImZvbnQtd2VpZ2h0OiA0MDA7IGZvbnQtc2l6ZTogMjBweDsiPlA8L3RleHQ+PC9zdmc+">
+	<div class="row">
+	<div class="span9">
+		<blockquote class="pull-left" style="word-break:break-all;">
+  			<p>{{comment.content}}</p>
+  			<small>{{comment.email}} - {{comment.timestamp}}</small>
+		</blockquote>		
+	</div>
+	<div class="span3"></div>      	
+	</div>
+	{% endfor %}
+	<br/>
+
+</div>
+
+<!-- ================================================== -->
+	
+	<script>
+		var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+
+		var lineChartData_week = {
+			labels : [ "6 weeks ago","5 weeks ago","4 weeks ago","3 weeks ago","2 weeks ago","last week","this week" ],
+			datasets : [
+				{% for price_chart in price_charts_week %}
+				{
+					label: "{{ price_chart.product_class_name }}",
+					fillColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},0)",
+					strokeColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					data : {{ price_chart.price_values }}
+				},
+				{% endfor %}
+			]
+		};
+		
+		var lineChartData_day = {
+			labels : ["6 days ago","5 days ago","4 days ago","3 days ago","2 days ago","yesterday","today"],
+			datasets : [
+				{% for price_chart in price_charts_day %}
+				{
+					label: "{{ price_chart.product_class_name }}",
+					fillColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},0)",
+					strokeColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					data : {{ price_chart.price_values }}
+				},
+				{% endfor %}
+			]
+		};
+
+		var lineChartData_month = {
+			labels : [ "12 months ago", "11 months ago", "10 months ago", "9 months ago", "8 months ago", "7 months ago", "6 months ago","5 months ago","4 months ago","3 months ago","2 months ago","last month","this month" ],
+			datasets : [
+				{% for price_chart in price_charts_month %}
+				{
+					label: "{{ price_chart.product_class_name }}",
+					fillColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},0)",
+					strokeColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointColor : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba({{price_chart.label_color_r}},{{price_chart.label_color_g}},{{price_chart.label_color_b}},1)",
+					data : {{ price_chart.price_values }}
+				},
+				{% endfor %}
+			]
+		};
+
+		var options = {
+			responsive: true
+		}
+
+	window.onload = function(){
+		var ctx_day = document.getElementById("canvas_day").getContext("2d");
+		var lineChart_day = new Chart(ctx_day).Line(lineChartData_day, options);
+
+		var ctx_week = document.getElementById("canvas_week").getContext("2d");
+		var lineChart_week = new Chart(ctx_week).Line(lineChartData_week, options);
+
+		var ctx_month = document.getElementById("canvas_month").getContext("2d");
+		var lineChart_month = new Chart(ctx_month).Line(lineChartData_month, options);
+		
+		//var legend = lineChart.generateLegend();
+
+		//and append it to your page somewhere
+		//$('#lineLegend').append(legend);
+	}
+
+
+	</script>
+
+
+<!-- ================================================== -->
+{% endblock %}
